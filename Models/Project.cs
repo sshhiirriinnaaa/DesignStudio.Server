@@ -8,6 +8,6 @@
         public decimal Price { get; set; }
         public double Lat { get; set; }
         public double Lng { get; set; }
-        public string? Image { get; set; } // Знак вопроса означает, что фото может не быть
+        public string? Image { get; set; } 
     }
 }

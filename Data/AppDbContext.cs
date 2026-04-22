@@ -9,7 +9,7 @@ namespace DesignStudio.Server.Data
         {
         }
 
-        // Эта строчка создаст таблицу Projects в MySQL
+      
         public DbSet<Project> Projects { get; set; }
     }
 }
