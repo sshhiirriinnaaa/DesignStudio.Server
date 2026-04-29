@@ -9,7 +9,10 @@ namespace DesignStudio.Server.Data
         {
         }
 
-      
+  
         public DbSet<Project> Projects { get; set; }
+
+      
+        public DbSet<Lead> Leads { get; set; }
     }
 }
