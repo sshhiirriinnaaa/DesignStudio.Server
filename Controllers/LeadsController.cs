@@ -2,6 +2,7 @@
 using DesignStudio.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace DesignStudio.Server.Controllers
 {
@@ -16,19 +17,22 @@ namespace DesignStudio.Server.Controllers
             _context = context;
         }
 
-  
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Lead>>> GetLeads()
         {
-       
-            return await _context.Leads.OrderByDescending(l => l.CreatedAt).ToListAsync();
+
+            return await _context.Leads.OrderByDescending(l => l.Id).ToListAsync();
         }
 
         [HttpPost]
         public async Task<ActionResult<Lead>> PostLead(Lead lead)
         {
            
-            lead.CreatedAt = DateTime.Now;
+            if (string.IsNullOrEmpty(lead.Date))
+            {
+                lead.Date = DateTime.Now.ToString("dd.MM.yyyy, HH:mm");
+            }
+
             lead.Status = "new";
 
             _context.Leads.Add(lead);
@@ -37,7 +41,6 @@ namespace DesignStudio.Server.Controllers
             return Ok(lead);
         }
 
-  
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLead(int id, Lead lead)
         {
