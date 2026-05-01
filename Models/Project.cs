@@ -8,6 +8,7 @@
         public decimal Price { get; set; }
         public double Lat { get; set; }
         public double Lng { get; set; }
-        public string? Image { get; set; } 
+        public string? Image { get; set; }
+        public string DisplayLocation { get; set; } = "both";
     }
 }

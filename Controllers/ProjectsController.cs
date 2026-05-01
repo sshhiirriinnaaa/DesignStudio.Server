@@ -49,5 +49,42 @@ namespace DesignStudio.Server.Controllers
           
             return NoContent();
         }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProject(int id, Project project)
+        {
+          
+            if (id != project.Id)
+            {
+                return BadRequest("ID проекта не совпадает");
+            }
+
+           
+            _context.Entry(project).State = EntityState.Modified;
+
+            try
+            {
+              
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+              
+                if (!_context.Projects.Any(e => e.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+           
+            return NoContent();
+        }
     }
+
+
 }
