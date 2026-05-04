@@ -11,12 +11,10 @@
         public List<string> Images { get; set; } = new List<string>();
         public string DisplayLocation { get; set; } = "both";
 
-      
-        public string? Client { get; set; } 
-        public string? Date { get; set; } 
-        public string? Rating { get; set; }
-        public string? Cient_reviews { get; set; } 
-        public string? Passage { get; set; } 
+        public string? Description { get; set; }  
+        public string? Address { get; set; }     
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
+
 
 
         public List<string> Tags { get; set; } = new List<string>();
