@@ -19,9 +19,22 @@ namespace DesignStudio.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-            return await _context.Projects.ToListAsync();
+           
+            return await _context.Projects.OrderByDescending(p => p.Id).ToListAsync();
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Project>> GetProject(int id)
+        {
+            var project = await _context.Projects.FindAsync(id);
+
+            if (project == null)
+            {
+                return NotFound("Проект не найден");
+            }
+
+            return project;
+        }
         [HttpPost]
         public async Task<ActionResult<Project>> PostProject(Project project)
         {
