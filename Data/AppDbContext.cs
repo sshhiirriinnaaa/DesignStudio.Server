@@ -14,6 +14,9 @@ namespace DesignStudio.Server.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<Lead> Leads { get; set; }
 
+        // --- НОВАЯ ТАБЛИЦА ДЛЯ АДМИНИСТРАТОРОВ ---
+        public DbSet<AdminUser> AdminUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
