@@ -13,10 +13,7 @@ namespace DesignStudio.Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
-
-        // Внедряем базу данных через конструктор
-        public AuthController(AppDbContext context)
-        {
+        public AuthController(AppDbContext context){
             _context = context;
         }
 

@@ -1,26 +1,22 @@
 using DesignStudio.Server.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.Features; // ÎÁßÇÀÒÅËÜÍÎ äëÿ íàñòğîéêè ëèìèòîâ
-
-// --- ÍÎÂÛÅ ÈÌÏÎĞÒÛ ÄËß JWT ---
+using Microsoft.AspNetCore.Http.Features; 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. ÓÂÅËÈ×ÈÂÀÅÌ ËÈÌÈÒÛ (ÑÅĞÂÅĞ) ---
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 104_857_600; // 100 ÌÁ
+    serverOptions.Limits.MaxRequestBodySize = 104_857_600; 
 });
 
 builder.Services.Configure<IISServerOptions>(options =>
 {
-    options.MaxRequestBodySize = 104_857_600; // 100 ÌÁ
+    options.MaxRequestBodySize = 104_857_600; 
 });
 
-// Äîïîëíèòåëüíàÿ ñòğàõîâêà äëÿ îãğîìíûõ êóñêîâ òåêñòà (Base64)
 builder.Services.Configure<FormOptions>(options =>
 {
     options.ValueLengthLimit = int.MaxValue;
@@ -28,14 +24,12 @@ builder.Services.Configure<FormOptions>(options =>
     options.MemoryBufferThreshold = int.MaxValue;
 });
 
-
-// --- 2. ÏÎÄÊËŞ×ÀÅÌ ÁÀÇÓ ÄÀÍÍÛÕ ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 
-// --- 3. ÍÀÑÒĞÀÈÂÀÅÌ CORS ---
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
@@ -47,7 +41,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-// --- 4. ÍÀÑÒĞÎÉÊÀ JWT ÀÂÒÎĞÈÇÀÖÈÈ (ÍÎÂÎÅ) ---
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -70,9 +64,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// ==========================================================
-// ÂÀÆÍÎ: ÑÒĞÎÃÈÉ ÏÎĞßÄÎÊ ÊÎÍÂÅÉÅĞÀ (ÎÒ İÒÎÃÎ ÇÀÂÈÑÈÒ ÂÑ¨)
-// ==========================================================
 
 if (app.Environment.IsDevelopment())
 {
