@@ -13,8 +13,6 @@ namespace DesignStudio.Server.Data
 
         public DbSet<Project> Projects { get; set; }
         public DbSet<Lead> Leads { get; set; }
-
-        // --- НОВАЯ ТАБЛИЦА ДЛЯ АДМИНИСТРАТОРОВ ---
         public DbSet<AdminUser> AdminUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,14 +34,7 @@ namespace DesignStudio.Server.Data
                 )
                 .Metadata.SetValueComparer(stringListComparer);
 
-            // Настройка для поля Tags (с защитой от NULL и пустых строк)
-            modelBuilder.Entity<Project>()
-                .Property(p => p.Tags)
-                .HasConversion(
-                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
-                    v => string.IsNullOrWhiteSpace(v) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null!)!
-                )
-                .Metadata.SetValueComparer(stringListComparer);
+           
         }
     }
 }

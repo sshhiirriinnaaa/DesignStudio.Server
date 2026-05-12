@@ -4,7 +4,7 @@ namespace DesignStudio.Server.Models
 {
     public class AdminUser
     {
-        [Key]
+       
         public int Id { get; set; }
 
         [Required]

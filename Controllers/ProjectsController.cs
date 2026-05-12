@@ -1,5 +1,6 @@
 ﻿using DesignStudio.Server.Data;
 using DesignStudio.Server.Models;
+using Microsoft.AspNetCore.Authorization; // ДОБАВЛЕНО
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,13 +18,14 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpGet]
+        // Открыто: галерея проектов доступна всем
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-           
             return await _context.Projects.OrderByDescending(p => p.Id).ToListAsync();
         }
 
         [HttpGet("{id}")]
+        // Открыто: просмотр одного проекта доступен всем
         public async Task<ActionResult<Project>> GetProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
@@ -35,10 +37,11 @@ namespace DesignStudio.Server.Controllers
 
             return project;
         }
+
         [HttpPost]
+        [Authorize] // Защищено: добавлять может только админ
         public async Task<ActionResult<Project>> PostProject(Project project)
         {
-            // ЗАЩИТА: Если картинок нет, создаем пустой список, чтобы сервер не упал
             if (project.Images == null)
             {
                 project.Images = new List<string>();
@@ -46,6 +49,7 @@ namespace DesignStudio.Server.Controllers
 
             project.Images = await SaveImagesToFolderAsync(project.Images);
 
+            project.CreatedAt = DateTime.UtcNow;
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
@@ -53,6 +57,7 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize] // Защищено: удалять может только админ
         public async Task<IActionResult> DeleteProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
@@ -68,6 +73,7 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize] // Защищено: изменять может только админ
         public async Task<IActionResult> PutProject(int id, Project project)
         {
             if (id != project.Id)
@@ -75,7 +81,6 @@ namespace DesignStudio.Server.Controllers
                 return BadRequest("ID проекта не совпадает");
             }
 
-            // ЗАЩИТА: Если картинок нет, создаем пустой список
             if (project.Images == null)
             {
                 project.Images = new List<string>();
@@ -107,7 +112,6 @@ namespace DesignStudio.Server.Controllers
         {
             var savedUrls = new List<string>();
 
-            // ГЛАВНЫЙ БРОНЕЖИЛЕТ: Если список пустой, сразу возвращаем пустоту
             if (base64Images == null || base64Images.Count == 0)
             {
                 return savedUrls;
@@ -122,7 +126,6 @@ namespace DesignStudio.Server.Controllers
 
             foreach (var base64 in base64Images)
             {
-                // Пропускаем битые или пустые строки
                 if (string.IsNullOrWhiteSpace(base64)) continue;
 
                 if (base64.StartsWith("http") || base64.StartsWith("/"))
@@ -141,7 +144,6 @@ namespace DesignStudio.Server.Controllers
 
                     await System.IO.File.WriteAllBytesAsync(filePath, bytes);
 
-                    // Убедись, что порт (7002) совпадает с твоим рабочим
                     savedUrls.Add($"https://localhost:7002/images/projects/{fileName}");
                 }
                 catch (Exception ex)

@@ -2,11 +2,11 @@
 {
     public class Lead
     {
-        public int Id { get; set; } // Уникальный номер заявки
-        public string Name { get; set; } = string.Empty; // Имя клиента
-        public string Email { get; set; } = string.Empty; // Почта клиента
-        public string Message { get; set; } = string.Empty; // Текст сообщения
-        public string Status { get; set; } = "new"; // Статус: "new" (новая) или "contacted" (обработана)
-        public string? Date { get; set; }
+        public int Id { get; set; } 
+        public string Name { get; set; } = string.Empty; 
+        public string Email { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty; 
+        public string Status { get; set; } = "new";
+        public DateTime CreatedAt { get; set; }
     }
 }

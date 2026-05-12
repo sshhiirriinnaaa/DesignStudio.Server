@@ -9,13 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 104_857_600; 
+    serverOptions.Limits.MaxRequestBodySize = 104_857_600;
 });
 
-builder.Services.Configure<IISServerOptions>(options =>
-{
-    options.MaxRequestBodySize = 104_857_600; 
-});
 
 builder.Services.Configure<FormOptions>(options =>
 {
@@ -24,12 +20,14 @@ builder.Services.Configure<FormOptions>(options =>
     options.MemoryBufferThreshold = int.MaxValue;
 });
 
+
+// ПОДКЛЮЧ АЕМ БАЗУ ДАННЫХ
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 
-
+//НАСТРАИВАЕМ CORS ---
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
@@ -41,7 +39,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-
+//  НАСТРОЙКА JWT АВТОРИЗАЦИИ 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -53,8 +51,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = "StoryHome",
             ValidAudience = "StoryHomeAdmin",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretKeyForStoryHomeDiplomaProject2026!"))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretKeyForStoryHomeDiplomaProject2026!")),
+
+
+
+            ClockSkew = TimeSpan.Zero
         };
+
     });
 
 
@@ -73,22 +76,22 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// 1. Сначала отдаем статические файлы (папка wwwroot для картинок)
+//  отдаем статические файлы 
 app.UseStaticFiles();
 
-// 2. Включаем систему маршрутов
+// Включаем систему маршрутов
 app.UseRouting();
 
-// 3. CORS ОБЯЗАТЕЛЬНО ПОСЛЕ Routing, но строго ДО Authorization
+// CORS 
 app.UseCors("AllowReactApp");
 
-// 4. Проверяем токен (НОВОЕ - строго ДО проверки прав)
+//  Проверяем токен 
 app.UseAuthentication();
 
-// 5. Проверяем права (разрешен ли доступ)
+// Проверяем права (разрешен ли доступ)
 app.UseAuthorization();
 
-// 6. Запускаем контроллеры
+// Запускаем контроллеры
 app.MapControllers();
 
 app.Run();

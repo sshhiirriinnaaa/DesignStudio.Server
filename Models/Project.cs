@@ -16,7 +16,5 @@
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
 
 
-
-        public List<string> Tags { get; set; } = new List<string>();
     }
 }

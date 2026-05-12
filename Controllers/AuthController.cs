@@ -20,16 +20,16 @@ namespace DesignStudio.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            // 1. Ищем пользователя в базе данных
+       
             var admin = _context.AdminUsers.FirstOrDefault(a => a.Username == request.Username);
 
-            // 2. Проверяем: есть ли такой юзер И совпадает ли зашифрованный пароль
+          
             if (admin == null || !BCrypt.Net.BCrypt.Verify(request.Password, admin.PasswordHash))
             {
                 return Unauthorized(new { message = "Неверный логин или пароль" });
             }
 
-            // 3. Если всё верно — генерируем токен
+            // Если всё верно — генерируем токен
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretKeyForStoryHomeDiplomaProject2026!"));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -44,16 +44,13 @@ namespace DesignStudio.Server.Controllers
                 issuer: "StoryHome",
                 audience: "StoryHomeAdmin",
                 claims: claims,
-                expires: DateTime.Now.AddHours(12), // Токен живет 12 часов
+                expires: DateTime.Now.AddSeconds(30),
                 signingCredentials: credentials);
 
             return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
         }
 
-        // ========================================================
-        // МЕТОД ДЛЯ СОЗДАНИЯ АДМИНА (Использовать 1 раз через Swagger)
-        // На защите скажи, что в продакшене этот метод будет удален или скрыт
-        // ========================================================
+
         [HttpPost("register-first-admin")]
         public IActionResult RegisterAdmin([FromBody] LoginRequest request)
         {
