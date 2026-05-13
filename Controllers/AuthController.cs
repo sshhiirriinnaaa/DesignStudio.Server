@@ -13,8 +13,11 @@ namespace DesignStudio.Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public AuthController(AppDbContext context){
+        private readonly IConfiguration _configuration;
+        public AuthController(AppDbContext context, IConfiguration configuration)
+        {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -28,9 +31,11 @@ namespace DesignStudio.Server.Controllers
             {
                 return Unauthorized(new { message = "Неверный логин или пароль" });
             }
-
+            var keyStr = _configuration["Jwt:Key"];
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
             // Если всё верно — генерируем токен
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretKeyForStoryHomeDiplomaProject2026!"));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyStr!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             // Добавляем информацию (Claims) в токен

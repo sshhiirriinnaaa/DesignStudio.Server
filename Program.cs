@@ -39,7 +39,11 @@ builder.Services.AddCors(options =>
         });
 });
 
-//  ÍÀÑÒÐÎÉÊÀ JWT ÀÂÒÎÐÈÇÀÖÈÈ 
+// ×ÈÒÀÅÌ ÍÀÑÒÐÎÉÊÈ ÈÇ APPSETTINGS.JSON
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -49,17 +53,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "StoryHome",
-            ValidAudience = "StoryHomeAdmin",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretKeyForStoryHomeDiplomaProject2026!")),
-
-
-
-            ClockSkew = TimeSpan.Zero
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
         };
-
     });
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
