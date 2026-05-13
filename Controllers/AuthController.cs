@@ -49,7 +49,7 @@ namespace DesignStudio.Server.Controllers
                 issuer: "StoryHome",
                 audience: "StoryHomeAdmin",
                 claims: claims,
-                expires: DateTime.Now.AddSeconds(30),
+                expires: DateTime.Now.AddHours(12),
                 signingCredentials: credentials);
 
             return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
