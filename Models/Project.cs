@@ -1,10 +1,14 @@
-﻿namespace DesignStudio.Server.Models
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DesignStudio.Server.Models
 {
     public class Project
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal? Price { get; set; }
         public double Lat { get; set; }
         public double Lng { get; set; }

@@ -18,14 +18,14 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize] // Защищено: только админ видит список заявок
+        [Authorize] 
         public async Task<ActionResult<IEnumerable<Lead>>> GetLeads()
         {
             return await _context.Leads.OrderByDescending(l => l.Id).ToListAsync();
         }
 
         [HttpPost]
-        // Открыто: любой посетитель сайта может отправить заявку
+       
         public async Task<ActionResult<Lead>> PostLead(Lead lead)
         {
             lead.CreatedAt = DateTime.UtcNow;
@@ -38,7 +38,7 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize] // Защищено: только админ меняет статус
+        [Authorize] 
         public async Task<IActionResult> PutLead(int id, Lead lead)
         {
             if (id != lead.Id)

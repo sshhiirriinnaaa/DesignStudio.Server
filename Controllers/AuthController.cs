@@ -34,11 +34,11 @@ namespace DesignStudio.Server.Controllers
             var keyStr = _configuration["Jwt:Key"];
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
-            // Если всё верно — генерируем токен
+            
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyStr!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            // Добавляем информацию (Claims) в токен
+          
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, admin.Username),

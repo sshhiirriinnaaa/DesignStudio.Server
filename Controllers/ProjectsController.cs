@@ -18,14 +18,14 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpGet]
-        // Открыто: галерея проектов доступна всем
+        
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
             return await _context.Projects.OrderByDescending(p => p.Id).ToListAsync();
         }
 
         [HttpGet("{id}")]
-        // Открыто: просмотр одного проекта доступен всем
+    
         public async Task<ActionResult<Project>> GetProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
@@ -39,7 +39,7 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize] // Защищено: добавлять может только админ
+        [Authorize] 
         public async Task<ActionResult<Project>> PostProject(Project project)
         {
             if (project.Images == null)
@@ -50,6 +50,7 @@ namespace DesignStudio.Server.Controllers
             project.Images = await SaveImagesToFolderAsync(project.Images);
 
             project.CreatedAt = DateTime.UtcNow;
+
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
@@ -57,7 +58,7 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize] // Защищено: удалять может только админ
+        [Authorize] 
         public async Task<IActionResult> DeleteProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
@@ -73,7 +74,7 @@ namespace DesignStudio.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize] // Защищено: изменять может только админ
+        [Authorize] 
         public async Task<IActionResult> PutProject(int id, Project project)
         {
             if (id != project.Id)
