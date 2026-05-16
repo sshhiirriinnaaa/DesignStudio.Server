@@ -66,6 +66,7 @@ namespace DesignStudio.Server.Controllers
             {
                 return NotFound();
             }
+            DeleteImagesFromFolder(project.Images);
 
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
@@ -81,11 +82,21 @@ namespace DesignStudio.Server.Controllers
             {
                 return BadRequest("ID проекта не совпадает");
             }
+            var existingProject = await _context.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+            if (existingProject == null)
+            {
+                return NotFound();
+            }
 
             if (project.Images == null)
             {
                 project.Images = new List<string>();
             }
+
+            var imagesToDelete = existingProject.Images.Except(project.Images).ToList();
+
+            // УДАЛЯЕМ ФИЗИЧЕСКИ ОТКЛОНЕННЫЕ КАРТИНКИ
+            DeleteImagesFromFolder(imagesToDelete);
 
             project.Images = await SaveImagesToFolderAsync(project.Images);
             _context.Entry(project).State = EntityState.Modified;
@@ -154,5 +165,37 @@ namespace DesignStudio.Server.Controllers
             }
             return savedUrls;
         }
+
+
+        private void DeleteImagesFromFolder(List<string> imageUrls)
+        {
+            if (imageUrls == null || !imageUrls.Any()) return;
+
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "projects");
+
+            foreach (var url in imageUrls)
+            {
+                if (string.IsNullOrWhiteSpace(url) || url.StartsWith("data:image")) continue;
+
+                try
+                {
+                    // Достаем имя файла из URL (например, из https://localhost:7002/images/projects/myimg.jpg получаем myimg.jpg)
+                    var uri = new Uri(url);
+                    var fileName = Path.GetFileName(uri.LocalPath);
+                    var filePath = Path.Combine(folderPath, fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка удаления файла: {ex.Message}");
+                }
+            }
+        }
     }
+
+
 }
