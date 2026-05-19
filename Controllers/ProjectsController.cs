@@ -49,7 +49,10 @@ namespace DesignStudio.Server.Controllers
 
             project.Images = await SaveImagesToFolderAsync(project.Images);
 
-            project.CreatedAt = DateTime.UtcNow;
+            if (project.CreatedAt == default)
+            {
+                project.CreatedAt = DateTime.UtcNow;
+            }
 
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
